@@ -11,7 +11,7 @@ from numbers import Real
 from .geometry import _IntMeasurements, Measurements
 from .stars import LayoutKind
 
-__all__ = ("FlagColors", "get_svg", "write_svg")
+__all__ = ("FlagColors", "get_svg_from_star_coordinates", "write_svg")
 
 @dataclasses.dataclass
 class FlagColors:
@@ -48,7 +48,7 @@ def get_svg_from_layout(
 
     return "".join(buffer)
 
-def get_svg(
+def get_svg_from_star_coordinates(
         measurements: Measurements,
         star_coordinates: Collection[tuple[Real, Real]],
         width: Real|str|None = None,
@@ -266,4 +266,4 @@ def write_svg_from_layout(file, *args, **kwargs):
     print(get_svg_from_layout(*args, **kwargs), file=file)
 
 def write_svg(file, *args, **kwargs):
-    print(get_svg(*args, **kwargs), file=file)
+    print(get_svg_from_star_coordinates(*args, **kwargs), file=file)
