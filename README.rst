@@ -49,3 +49,6 @@ Todos and future features
     - [ ] Add either a threshold system or a boolean parameter so that the 50
           flag remains the same
     - May cause issues with the no-layout builder version
+- In the SVG writer, fix:
+  - [ ] Sizing the stars arbitrarily using a dict
+  - [ ] The layout method for all layout kinds
