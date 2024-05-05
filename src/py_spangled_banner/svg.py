@@ -223,10 +223,11 @@ def _append_canton_from_coordinates(
     canton_height = measurements.canton_height
 
     if not isinstance(star_coordinates, Mapping):
-        star_coordinates = dict.fromkeys(star_coordinates, star_diameter)
-        first_star_scale = True
+        do_scaling = False
+        first_star_scale = Decimal(1)
         first_star, *other_stars = star_coordinates
     else:
+        do_scaling = True
         first_star, *other_stars = star_coordinates
         first_star_scale = Decimal(star_coordinates[first_star]) / star_diameter
     first_star_x, first_star_y = first_star
@@ -249,10 +250,10 @@ def _append_canton_from_coordinates(
     </g>''')
 
     for (x, y) in other_stars:
-        star_size = star_coordinates[x, y]
         buffer.append(f'''
     <use href="#star" x="{float(x-first_star_x)*canton_width}" y="{float(y-first_star_y)*canton_height}"''') # type: ignore
-        if first_star_scale is not True:
+        if do_scaling:
+            star_size = star_coordinates[x, y] # type: ignore
             star_scale = Decimal(star_size) / (scale*first_star_scale * star_diameter)
             if star_scale != 1:
                 buffer.append(f' transform="scale({star_scale})"')
