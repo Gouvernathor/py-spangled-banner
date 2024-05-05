@@ -8,7 +8,7 @@ from decimal import Decimal
 import enum
 from numbers import Real
 
-from .geometry import _IntMeasurements, Measurements
+from .geometry import _IntMeasurements, coordinates_from_layout, Measurements
 from .stars import LayoutKind
 
 __all__ = ("FlagColors", "get_svg_from_star_coordinates", "write_svg")
@@ -43,7 +43,14 @@ def get_svg_from_layout(
 
     _append_header(buffer, height, width, measurements)
     _append_stripes(buffer, measurements, colors)
-    _append_canton_from_layout(buffer, measurements, layout, colors)
+
+    kind = LayoutKind.from_layout(layout)
+    # TODO: implement the different layouts
+    if kind in (LayoutKind.SHORT_SANDWICH,):
+        _append_canton_from_layout(buffer, measurements, layout, colors)
+    else:
+        _append_canton_from_coordinates(buffer, measurements, set(coordinates_from_layout(layout)), colors)
+
     _append_footer(buffer)
 
     return "".join(buffer)
@@ -143,12 +150,6 @@ def _append_canton_from_layout(
 
     if not (nb_lg_rows and ln_lg_rows):
         return
-
-    kind = LayoutKind.from_layout(layout)
-    # TODO: implement the different layouts
-    if kind not in (LayoutKind.GRID, LayoutKind.SHORT_SANDWICH):
-        # Pagoda and Quincunx may work, tho
-        raise NotImplementedError(f"Layout kind {kind} is not supported yet.")
 
     lg_row_id = f"{ln_lg_rows}-row"
     sh_row_id = f"{ln_sh_rows}-row"
