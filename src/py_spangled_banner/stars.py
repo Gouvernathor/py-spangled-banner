@@ -11,8 +11,7 @@ __all__ = ("find_best_star_layout", "find_best_star_layouts", "generate_star_lay
 
 def _optimize_layout(x: tuple[int, int, int, int], canton_factor: Real) -> Real:
     a, b, c, d = x
-    if c == 0:
-        d = 0
+    assert (c == 0) == (d == 0)
     return abs((a + c + 1) * canton_factor - (b + d + 1)) # type: ignore
 
 def generate_star_layouts(nstars: int, _allow_extended_quincunx=False) -> Iterable[tuple[int, int, int, int]]:
