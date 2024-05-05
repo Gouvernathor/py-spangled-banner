@@ -47,6 +47,8 @@ class LayoutKind(enum.StrEnum):
     @staticmethod
     def from_layout(layout: tuple[int, int, int, int]) -> "LayoutKind":
         a, b, c, d = layout
+        if (a == 0) != (b == 0) or (c == 0) != (d == 0):
+            raise ValueError(f"Invalid layout: {layout}")
         if not c:
             return LayoutKind.GRID
         if d == b:
