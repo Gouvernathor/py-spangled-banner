@@ -28,10 +28,6 @@ class LayoutKind(enum.StrEnum):
     The stars are arranged in a grid, like the 24-star "Old Glory" flag, or the 48-star flag.
     """
 
-    QUINCUNX = enum.auto(), """
-    The stars are arranged in a quincunx, like the short-lived 49-star flag.
-    """
-
     SHORT_SANDWICH = enum.auto(), """
     Each shorter row of stars is between two longer rows, like the 50-star flag.
     """
@@ -44,6 +40,14 @@ class LayoutKind(enum.StrEnum):
     Each longer row of stars is followed by a shorter row, like the 45-star flag.
     """
 
+    SIDE_PAGODA = enum.auto(), """
+    An odd number of rows, all of the same length, like the short-lived 49-star flag.
+    """
+
+    CUBE = enum.auto(), """
+    An even number of rows, all of the same length.
+    """
+
     @staticmethod
     def from_layout(layout: tuple[int, int, int, int]) -> "LayoutKind":
         a, b, c, d = layout
@@ -52,7 +56,9 @@ class LayoutKind(enum.StrEnum):
                 return LayoutKind.GRID
             if d == b:
                 if c == a-1:
-                    return LayoutKind.QUINCUNX
+                    return LayoutKind.SIDE_PAGODA
+                if c == a:
+                    return LayoutKind.CUBE
             elif d == b - 1:
                 if c == a - 1:
                     return LayoutKind.SHORT_SANDWICH
@@ -62,12 +68,13 @@ class LayoutKind(enum.StrEnum):
                     return LayoutKind.PAGODA
         raise ValueError(f"Invalid layout: {layout}")
 
-def generate_star_layouts(nstars: int, _allow_extended_quincunx=False) -> Iterable[tuple[int, int, int, int]]:
+def generate_star_layouts(nstars: int) -> Iterable[tuple[int, int, int, int]]:
     """
     The results represent that a rows of b stars are interspersed with c rows of d stars.
 
     Returns a, b and c such that :
     * a*b + c*(b-1) = nstars
+    * b >= d
     * c is in (0, a-1, a, a+1)
     * if c = 0, then d = 0
     * elif c = a-1 (this condition may be optional), d is in (b-1, b)
@@ -90,7 +97,7 @@ def generate_star_layouts(nstars: int, _allow_extended_quincunx=False) -> Iterab
                     continue
 
                 d_options = [b - 1]
-                if (c == a-1) or _allow_extended_quincunx:
+                if c in (a-1, a):
                     d_options.append(b)
 
                 for d in d_options:
