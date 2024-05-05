@@ -47,18 +47,19 @@ class LayoutKind(enum.StrEnum):
     @staticmethod
     def from_layout(layout: tuple[int, int, int, int]) -> "LayoutKind":
         a, b, c, d = layout
-        if (a == 0) != (b == 0) or (c == 0) != (d == 0):
-            raise ValueError(f"Invalid layout: {layout}")
-        if not c:
-            return LayoutKind.GRID
-        if d == b:
-            return LayoutKind.QUINCUNX
-        if c == a - 1:
-            return LayoutKind.SHORT_SANDWICH
-        if c == a + 1:
-            return LayoutKind.LONG_SANDWICH
-        if c == a:
-            return LayoutKind.PAGODA
+        if (a == 0) == (b == 0) and (c == 0) == (d == 0):
+            if not c:
+                return LayoutKind.GRID
+            if d == b:
+                if c == a-1:
+                    return LayoutKind.QUINCUNX
+            elif d == b - 1:
+                if c == a - 1:
+                    return LayoutKind.SHORT_SANDWICH
+                if c == a + 1:
+                    return LayoutKind.LONG_SANDWICH
+                if c == a:
+                    return LayoutKind.PAGODA
         raise ValueError(f"Invalid layout: {layout}")
 
 def generate_star_layouts(nstars: int, _allow_extended_quincunx=False) -> Iterable[tuple[int, int, int, int]]:
