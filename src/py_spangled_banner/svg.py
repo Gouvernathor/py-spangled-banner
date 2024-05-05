@@ -258,5 +258,8 @@ def _append_footer(buffer: list[str]) -> None:
 </svg>
 ''')
 
+def write_svg_from_layout(file, *args, **kwargs):
+    print(get_svg_from_layout(*args, **kwargs), file=file)
+
 def write_svg(file, *args, **kwargs):
     print(get_svg(*args, **kwargs), file=file)
