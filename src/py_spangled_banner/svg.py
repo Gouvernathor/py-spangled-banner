@@ -223,7 +223,7 @@ def _append_canton_from_coordinates(
 
     if not isinstance(star_coordinates, Mapping):
         star_coordinates = dict.fromkeys(star_coordinates, star_diameter)
-        first_star_scale = Decimal(1)
+        first_star_scale = True
         first_star, *other_stars = star_coordinates
     else:
         first_star, *other_stars = star_coordinates
@@ -251,11 +251,11 @@ def _append_canton_from_coordinates(
         star_size = star_coordinates[x, y]
         buffer.append(f'''
     <use href="#star" x="{float(x-first_star_x)*canton_width}" y="{float(y-first_star_y)*canton_height}"''') # type: ignore
-        star_scale = Decimal(star_size) / (scale*first_star_scale * star_diameter)
-        if star_scale != 1:
-            buffer.append(f' transform="scale({star_scale})"/>')
-        else:
-            buffer.append('/>')
+        if first_star_scale is not True:
+            star_scale = Decimal(star_size) / (scale*first_star_scale * star_diameter)
+            if star_scale != 1:
+                buffer.append(f' transform="scale({star_scale})"')
+        buffer.append('/>')
 
 def _append_footer(buffer: list[str]) -> None:
     buffer.append('''
