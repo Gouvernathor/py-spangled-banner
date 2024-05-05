@@ -2,6 +2,7 @@
 Manages the export to the SVG format.
 """
 
+from collections.abc import Collection, Mapping
 import dataclasses
 from decimal import Decimal
 from numbers import Real
@@ -24,7 +25,7 @@ class FlagColors:
 
 _DEFAULT_FLAG_COLORS = FlagColors()
 
-def get_svg(
+def get_svg_from_layout(
         measurements: Measurements,
         layout: tuple[int, int, int, int],
         height: Real|str|None = None,
@@ -38,7 +39,26 @@ def get_svg(
 
     _append_header(buffer, height, width, measurements)
     _append_stripes(buffer, measurements, colors)
-    _append_canton(buffer, measurements, layout, colors)
+    _append_canton_from_layout(buffer, measurements, layout, colors)
+    _append_footer(buffer)
+
+    return "".join(buffer)
+
+def get_svg(
+        measurements: Measurements,
+        star_coordinates: Collection[tuple[Real, Real]],
+        width: Real|str|None = None,
+        height: Real|str|None = None,
+        colors: FlagColors = _DEFAULT_FLAG_COLORS,
+        ) -> str:
+
+    measurements = measurements.normalize()
+
+    buffer = []
+
+    _append_header(buffer, height, width, measurements)
+    _append_stripes(buffer, measurements, colors)
+    _append_canton_from_coordinates(buffer, measurements, star_coordinates, colors)
     _append_footer(buffer)
 
     return "".join(buffer)
@@ -69,7 +89,11 @@ def _append_header(
     buffer.append('''
     <!-- Created with py-spangled-banner (https://github.com/Gouvernathor/py-spangled-banner) -->''')
 
-def _append_rect_stripes(buffer: list[str], measurements: _IntMeasurements, colors: FlagColors) -> None:
+def _append_rect_stripes(
+        buffer: list[str],
+        measurements: _IntMeasurements,
+        colors: FlagColors,
+        ) -> None:
     nb_white_stripes = (measurements.height // measurements.stripe_height) // 2
     nb_short_white_stripes = (measurements.canton_height // measurements.stripe_height) // 2
     white_id = "inner_stripe" if colors is _DEFAULT_FLAG_COLORS else "white_stripe"
@@ -101,7 +125,7 @@ def _append_path_stripes(buffer: list[str], measurements: _IntMeasurements, colo
 
 _append_stripes = _append_rect_stripes
 
-def _append_canton(
+def _append_canton_from_layout(
         buffer: list[str],
         measurements: _IntMeasurements,
         layout: tuple[int, int, int, int],
@@ -175,6 +199,59 @@ def _append_canton(
     for k in range(1, nb_lg_rows):
         buffer.append(f'''
     <use href="#{lg_row_id}" y="{measurements.vertical_star_spacing*(2*k)}"/>''')
+
+def _append_canton_from_coordinates(
+        buffer: list[str],
+        measurements: _IntMeasurements,
+        star_coordinates: Collection[tuple[Real, Real]],
+        colors: FlagColors,
+        ) -> None:
+
+    buffer.append(f'''
+    <rect width="{measurements.canton_width}" height="{measurements.canton_height}" fill="{colors.canton}"/>''')
+
+    if not star_coordinates:
+        return
+
+    star_diameter = measurements.star_diameter
+    canton_width = measurements.canton_width
+    canton_height = measurements.canton_height
+
+    if not isinstance(star_coordinates, Mapping):
+        star_coordinates = dict.fromkeys(star_coordinates, star_diameter)
+        first_star_scale = Decimal(1)
+        first_star, *other_stars = star_coordinates
+    else:
+        first_star, *other_stars = star_coordinates
+        first_star_scale = Decimal(star_coordinates[first_star]) / star_diameter
+    first_star_x, first_star_y = first_star
+
+    # TODO: use the real formulae to make up a 5-points star
+    scale = Decimal(star_diameter) / Decimal(240)
+
+    # TODO: avoid using float, somehow
+    buffer.append(f'''
+    <g id="star">
+        <path
+            d="M {float(first_star_x)*canton_width},{float(first_star_y)*canton_height}
+               m 0,{-scale*first_star_scale*star_diameter/2}
+               l {scale*Decimal("70.534230")},{scale*Decimal("217.082039")}
+                 {scale*Decimal("-184.661012")},{scale*Decimal("-134.164078")}
+               h {scale*Decimal("228.253564")}
+               l {scale*Decimal("-184.661012")},{scale*Decimal("134.164078")}
+               z"
+            fill="{colors.stars}"/>
+    </g>''')
+
+    for (x, y) in other_stars:
+        star_size = star_coordinates[x, y]
+        buffer.append(f'''
+    <use href="#star" x="{float(x-first_star_x)*canton_width}" y="{float(y-first_star_y)*canton_height}"''') # type: ignore
+        star_scale = Decimal(star_size) / (scale*first_star_scale * star_diameter)
+        if star_scale != 1:
+            buffer.append(f' transform="scale({star_scale})"/>')
+        else:
+            buffer.append('/>')
 
 def _append_footer(buffer: list[str]) -> None:
     buffer.append('''
