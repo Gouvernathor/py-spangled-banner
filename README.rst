@@ -35,7 +35,7 @@ Todos and future features
       return layouts of that kind
 - [ ] Make the SVG builder take a sequence of relative coordinates inside the
       canton, or a dict whose values are the diameter of the stars
-  - [ ] Add, somewhere, a function generating the coordinates of the stars
+  - [x] Add, somewhere, a function generating the coordinates of the stars
         relative to the canton based on the layout
     - [ ] Add optional margin parameters ?
   - [ ] Put the builder taking a layout elsewhere ? Or in the main module, have

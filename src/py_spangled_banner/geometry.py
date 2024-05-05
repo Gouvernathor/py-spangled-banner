@@ -2,12 +2,13 @@
 Computes the sizes of different parts of the flag, mainly depending on the stars and other parameters.
 """
 
+from collections.abc import Iterable
 from fractions import Fraction
 import math
 from numbers import Rational
 from typing import NamedTuple
 
-from .stars import _DEFAULT_LAYOUT
+from .stars import _DEFAULT_LAYOUT, LayoutKind
 
 __all__ = ("Measurements",)
 
@@ -99,3 +100,41 @@ class _IntMeasurements(Measurements):
     horizontal_star_spacing: int
     star_diameter: int
     stripe_height: int
+
+def coordinates_from_layout(layout: tuple[int, int, int, int]) -> Iterable[tuple[Rational, Rational]]:
+    a, b, c, d = layout
+
+    measurements = Measurements.generate(star_layout=layout)
+    relative_xmargin = measurements.horizontal_stars_margin / measurements.canton_width
+    relative_ymargin = measurements.vertical_stars_margin / measurements.canton_height
+    relative_xspacing = measurements.horizontal_star_spacing / measurements.canton_width
+    relative_yspacing = measurements.vertical_star_spacing / measurements.canton_height
+
+    match LayoutKind.from_layout(layout):
+        case LayoutKind.GRID:
+            for x in range(b):
+                for y in range(a):
+                    yield relative_xmargin + x * relative_xspacing, relative_ymargin + y * relative_yspacing
+
+        case LayoutKind.QUINCUNX|LayoutKind.SHORT_SANDWICH|LayoutKind.PAGODA:
+            # left-aligned rows
+            for y in range(a):
+                for x in range(b):
+                    yield relative_xmargin + 2*x * relative_xspacing, relative_ymargin + 2*y * relative_yspacing
+            # right-aligned rows
+            for y in range(c):
+                for x in range(d):
+                    yield relative_xmargin + (2*x + 1) * relative_xspacing, relative_ymargin + (2*y + 1) * relative_yspacing
+
+        case LayoutKind.LONG_SANDWICH:
+            # long rows
+            for y in range(a):
+                for x in range(b):
+                    yield relative_xmargin + 2*x * relative_xspacing, relative_ymargin + (2*y + 1) * relative_yspacing
+            # short rows
+            for y in range(c):
+                for x in range(d):
+                    yield relative_xmargin + (2*x + 1) * relative_xspacing, relative_ymargin + 2*y * relative_yspacing
+
+        case _:
+            raise ValueError(f"Invalid layout: {layout}")
