@@ -33,7 +33,7 @@ Todos and future features
 - [ ] Add other builtin palettes
 - [ ] Enable the layout generators to take a layout kind constraint, and only
       return layouts of that kind
-- [ ] Make the SVG builder take a sequence of relative coordinates inside the
+- [x] Make the SVG builder take a sequence of relative coordinates inside the
       canton, or a dict whose values are the diameter of the stars
   - [x] Add, somewhere, a function generating the coordinates of the stars
         relative to the canton based on the layout
