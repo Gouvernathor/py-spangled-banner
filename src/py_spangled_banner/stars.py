@@ -15,6 +15,8 @@ def _optimize_layout(x: tuple[int, int, int, int], canton_factor: Real) -> Real:
     assert (c == 0) == (d == 0)
     return abs((a + c + 1) * canton_factor - (b + d + 1)) # type: ignore
 
+_DEFAULT_LAYOUT = (5, 6, 4, 5)
+
 class LayoutKind(enum.StrEnum):
     def __new__(cls, value, doc):
         self = str.__new__(cls, value)
