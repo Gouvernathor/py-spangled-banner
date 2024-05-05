@@ -134,7 +134,7 @@ def coordinates_from_layout(layout: tuple[int, int, int, int]) -> Iterable[tuple
                 for y in range(a):
                     yield relative_xmargin + x * relative_xspacing, relative_ymargin + y * relative_yspacing
 
-        case LayoutKind.QUINCUNX|LayoutKind.SHORT_SANDWICH|LayoutKind.PAGODA:
+        case LayoutKind.SHORT_SANDWICH|LayoutKind.PAGODA|LayoutKind.SIDE_PAGODA|LayoutKind.CUBE:
             # left-aligned rows
             for y in range(a):
                 for x in range(b):
