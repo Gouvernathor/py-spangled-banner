@@ -7,8 +7,13 @@ import math
 from numbers import Rational
 from typing import NamedTuple
 
+from .stars import _DEFAULT_LAYOUT
+
+__all__ = ("Measurements",)
 
 class Measurements(NamedTuple):
+    # TODO: in 3.13, make the type parameterized and defaulted to Rational,
+    # and make the normalize method return a Measurements[int]
     height: Rational
     width: Rational
     canton_height: Rational
@@ -20,8 +25,6 @@ class Measurements(NamedTuple):
     star_diameter: Rational
     stripe_height: Rational
 
-    Rational.__truediv__
-
     def check(self) -> None:
         if self.canton_height % self.stripe_height:
             raise ValueError("The canton height should be a multiple of the stripe height.")
@@ -32,7 +35,7 @@ class Measurements(NamedTuple):
         if self.canton_height > self.height/2: # type: ignore
             raise ValueError("The canton should not cover more than half of the height of the flag.")
 
-    def normalize(self) -> "Measurements":
+    def normalize(self) -> "_IntMeasurements":
         """
         Builds a version only using integers, chosen to be the smallest integers possible
         while keeping the same ratios between all values.
@@ -42,24 +45,38 @@ class Measurements(NamedTuple):
         lcm = math.lcm(*(v.denominator for v in self))
         return Measurements(*(int(v * lcm) for v in self)) # type: ignore
 
-def generate_gov_spec(*,
-        star_layout: tuple[int, int, int, int] = (5, 6, 4, 5),
-        nstripes: int = 13,
-        ) -> Measurements:
-    """
-    Generates the government specifications for the flag.
-    Parameters to be added one-by-one.
-    """
-    a, b, c, d = star_layout
+    @staticmethod
+    def generate(*,
+            star_layout: tuple[int, int, int, int] = _DEFAULT_LAYOUT,
+            nstripes: int = 13,
+            ) -> "Measurements":
+        """
+        Generates the government specifications for the flag.
+        Parameters to be added one-by-one.
+        """
+        a, b, c, d = star_layout
 
-    A = Fraction(1)
-    B = A * Fraction(19, 10)
-    C = A * Fraction(nstripes//2, nstripes)
-    D = A * Fraction(2, 5)
-    E = F = C * Fraction(1, a+c+1)
-    G = H = D * Fraction(1, b+d+1)
+        A = Fraction(1)
+        B = A * Fraction(19, 10)
+        C = A * Fraction(math.ceil(nstripes/2), nstripes)
+        D = B * Fraction(2, 5)
+        E = F = C * Fraction(1, a+c+1)
+        G = H = D * Fraction(1, b+d+1)
 
-    L = A * Fraction(1, nstripes)
-    K = L * Fraction(4, 5)
+        L = A * Fraction(1, nstripes)
+        K = L * Fraction(4, 5)
 
-    return Measurements(A, B, C, D, E, F, G, H, K, L)
+        return Measurements(A, B, C, D, E, F, G, H, K, L)
+
+class _IntMeasurements(Measurements):
+    __slots__ = ()
+    height: int
+    width: int
+    canton_height: int
+    canton_width: int
+    vertical_stars_margin: int
+    vertical_star_spacing: int
+    horizontal_stars_margin: int
+    horizontal_star_spacing: int
+    star_diameter: int
+    stripe_height: int
