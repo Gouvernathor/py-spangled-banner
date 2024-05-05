@@ -45,11 +45,17 @@ class Measurements(NamedTuple):
         lcm = math.lcm(*(v.denominator for v in self))
         return Measurements(*(int(v * lcm) for v in self)) # type: ignore
 
+    def fractionize(self) -> "_FractionMeasurements":
+        """
+        Builds a version using fractions, to support safer calculations than ints do.
+        """
+        return _FractionMeasurements(*(map(Fraction, self)))
+
     @staticmethod
     def generate(*,
             star_layout: tuple[int, int, int, int] = _DEFAULT_LAYOUT,
             nstripes: int = 13,
-            ) -> "Measurements":
+            ) -> "_FractionMeasurements":
         """
         Generates the government specifications for the flag.
         Parameters to be added one-by-one.
@@ -66,7 +72,20 @@ class Measurements(NamedTuple):
         L = A * Fraction(1, nstripes)
         K = L * Fraction(4, 5)
 
-        return Measurements(A, B, C, D, E, F, G, H, K, L)
+        return _FractionMeasurements(A, B, C, D, E, F, G, H, K, L)
+
+class _FractionMeasurements(Measurements):
+    __slots__ = ()
+    height: Fraction
+    width: Fraction
+    canton_height: Fraction
+    canton_width: Fraction
+    vertical_stars_margin: Fraction
+    vertical_star_spacing: Fraction
+    horizontal_stars_margin: Fraction
+    horizontal_star_spacing: Fraction
+    star_diameter: Fraction
+    stripe_height: Fraction
 
 class _IntMeasurements(Measurements):
     __slots__ = ()
