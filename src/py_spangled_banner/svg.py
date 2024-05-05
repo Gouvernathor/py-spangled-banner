@@ -5,6 +5,7 @@ Manages the export to the SVG format.
 from collections.abc import Collection, Mapping
 import dataclasses
 from decimal import Decimal
+import enum
 from numbers import Real
 
 from .geometry import _IntMeasurements, Measurements
@@ -18,19 +19,22 @@ class FlagColors:
     The colors of the flag.
     Takes strings, which can be standard CSS color names, hexadecimal RGB values, rgb() calls...
     """
-    outer_stripes: str = "#B22234"
-    inner_stripes: str = "white"
-    canton: str = "#3C3B6E"
-    stars: str = "white"
+    outer_stripes: str
+    inner_stripes: str
+    canton: str
+    stars: str
 
-_DEFAULT_FLAG_COLORS = FlagColors()
+class FlagPalette(FlagColors, enum.Enum):
+    DEFAULT = ("#B22234", "#FFFFFF", "#3C3B6E", "#FFFFFF")
+    SATURATED = ("#FF0000", "#FFFFFF", "#0000FF", "#FFFFFF")
+    BLACK_AND_GREY = ("#000000", "#888888", "#000000", "#888888")
 
 def get_svg_from_layout(
         measurements: Measurements,
         layout: tuple[int, int, int, int],
         height: Real|str|None = None,
         width: Real|str|None = None,
-        colors: FlagColors = _DEFAULT_FLAG_COLORS,
+        colors: FlagColors = FlagPalette.DEFAULT,
         ) -> str:
 
     measurements = measurements.normalize()
@@ -49,7 +53,7 @@ def get_svg(
         star_coordinates: Collection[tuple[Real, Real]],
         width: Real|str|None = None,
         height: Real|str|None = None,
-        colors: FlagColors = _DEFAULT_FLAG_COLORS,
+        colors: FlagColors = FlagPalette.DEFAULT,
         ) -> str:
 
     measurements = measurements.normalize()
@@ -96,7 +100,7 @@ def _append_rect_stripes(
         ) -> None:
     nb_white_stripes = (measurements.height // measurements.stripe_height) // 2
     nb_short_white_stripes = (measurements.canton_height // measurements.stripe_height) // 2
-    white_id = "inner_stripe" if colors is _DEFAULT_FLAG_COLORS else "white_stripe"
+    white_id = "white_stripe" if colors is FlagPalette.DEFAULT else "inner_stripe"
 
     # TODO: what if there is only short white stripes ? or no white stripes ?
     buffer.append(f'''
