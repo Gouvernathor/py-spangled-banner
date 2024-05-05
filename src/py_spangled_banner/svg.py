@@ -54,15 +54,15 @@ def _append_header(
 <svg xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink"''')
 
-    if width is not None:
+    if width is height is None:
+        buffer.append('''
+     height="100%"''')
+    elif width is not None:
         buffer.append(f'''
      width="{width}"''')
-    if height is not None:
+    else:
         buffer.append(f'''
      height="{height}"''')
-    if width is height is None:
-        # TODO: do the thing that makes it take full height
-        pass
 
     buffer.append(f'''
      viewBox="0 0 {measurements.width} {measurements.height}">''')
