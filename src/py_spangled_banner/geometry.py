@@ -56,6 +56,7 @@ class Measurements(NamedTuple):
     def generate(*,
             star_layout: tuple[int, int, int, int] = _DEFAULT_LAYOUT,
             nstripes: int = 13,
+            proportional_star_size: bool = True,
             ) -> "_FractionMeasurements":
         """
         Generates the government specifications for the flag.
@@ -71,7 +72,24 @@ class Measurements(NamedTuple):
         G = H = D * Fraction(1, b+d+1)
 
         L = A * Fraction(1, nstripes)
-        K = L * Fraction(4, 5)
+        if proportional_star_size:
+            # take the closest distance between two stars
+            # times a compat factor (so that the 50 remains the same)
+            if LayoutKind.from_layout(star_layout) == LayoutKind.GRID:
+                dists = [
+                    D / (b + 1),
+                    C / (a + 1),
+                ]
+                # the diagonal is always larger than the others
+            else:
+                dists = [
+                    2 * D / (b + d + 1),
+                    2 * C / (a + c + 1),
+                    Fraction(math.sqrt((D/(b+d+1))**2 + (C/(a+c+1))**2)),
+                ]
+            K = Fraction(9007199254740992, 12167419471659595) * min(dists)
+        else:
+            K = L * Fraction(4, 5)
 
         return _FractionMeasurements(A, B, C, D, E, F, G, H, K, L)
 

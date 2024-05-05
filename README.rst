@@ -45,10 +45,11 @@ Todos and future features
   - [ ] Add xmargin and ymargin parameters, floats relative to the canton size
         which make up (or add to ?) the respective margins, and compute the
         stars spacing accordingly
-  - [ ] Make the star size proportional to the canton size the layout
-    - [ ] Add either a threshold system or a boolean parameter so that the 50
+  - [x] Make the star size proportional to the canton size and the layout
+    - [x] Add either a threshold system or a boolean parameter so that the 50
           flag remains the same
-    - May cause issues with the no-layout builder version
+    - May cause issues with the no-layout builder version - but generate
+      requires a layout anyway so it's a bigger issue
 - In the SVG writer, fix:
   - [ ] Sizing the stars arbitrarily using a dict
   - [ ] The layout method for all layout kinds
