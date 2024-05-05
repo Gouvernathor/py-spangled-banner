@@ -30,7 +30,7 @@ Todos and future features
 
 - [ ] Consider using etree in the SVG submodule, especially as part of handling
       the layouts
-- [ ] Add other builtin palettes
+- [x] Add other builtin palettes
 - [ ] Enable the layout generators to take a layout kind constraint, and only
       return layouts of that kind
 - [x] Make the SVG builder take a sequence of relative coordinates inside the
