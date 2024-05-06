@@ -87,7 +87,8 @@ class Measurements(NamedTuple):
                     2 * C / (a + c + 1),
                     Fraction(math.sqrt((D/(b+d+1))**2 + (C/(a+c+1))**2)),
                 ]
-            K = Fraction(9007199254740992, 12167419471659595) * min(dists)
+            # limiting the denominator to avoid massive numbers when normalizing
+            K = (Fraction(9007199254740992, 12167419471659595) * min(dists)).limit_denominator(1000)
         else:
             K = L * Fraction(4, 5)
 
