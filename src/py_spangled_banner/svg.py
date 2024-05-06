@@ -46,7 +46,9 @@ def get_svg_from_layout(
 
     kind = LayoutKind.from_layout(layout)
     # TODO: implement the different layouts
-    if kind in (LayoutKind.SHORT_SANDWICH,):
+    # TODO: fix _from_layout and convert it to _get_star_path
+    # if kind in (LayoutKind.SHORT_SANDWICH,):
+    if False:
         _append_canton_from_layout(buffer, measurements, layout, colors)
     else:
         _append_canton_from_coordinates(buffer, measurements, set(coordinates_from_layout(layout)), colors)
