@@ -164,19 +164,12 @@ def _append_canton_from_layout(
         buffer.append(f'''
         <g id="{sh_row_id}">''')
 
-    # TODO: use the real formulae to make up a 5-points star
-    scale = Decimal(measurements.star_diameter) / Decimal(240)
+    starpath = _get_star_path((measurements.horizontal_stars_margin, measurements.vertical_stars_margin), measurements.star_diameter/2, 23*' ')
 
     buffer.append(f'''
             <g id="star">
                 <path
-                    d="M {measurements.horizontal_stars_margin},{measurements.vertical_stars_margin}
-                       m 0,{-scale*measurements.star_diameter/2}
-                       l {scale*Decimal("70.534230")},{scale*Decimal("217.082039")}
-                         {scale*Decimal("-184.661012")},{scale*Decimal("-134.164078")}
-                       h {scale*Decimal("228.253564")}
-                       l {scale*Decimal("-184.661012")},{scale*Decimal("134.164078")}
-                       z"
+                    d="{starpath}"
                     fill="{colors.stars}"/>
             </g>''')
 
@@ -258,7 +251,7 @@ def _append_footer(buffer: list[str]) -> None:
 ''')
 
 def _get_star_path(
-        start: tuple[Fraction, Fraction],
+        start: tuple[Fraction|int, Fraction|int],
         radius: Fraction|int|float,
         indent: str,
         ) -> str:
