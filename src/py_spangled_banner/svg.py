@@ -6,6 +6,8 @@ from collections.abc import Collection, Mapping
 import dataclasses
 from decimal import Decimal
 import enum
+from fractions import Fraction
+from math import cos, pi, sin
 from numbers import Real
 
 from .geometry import _IntMeasurements, coordinates_from_layout, Measurements
@@ -226,28 +228,19 @@ def _append_canton_from_coordinates(
 
     if not isinstance(star_coordinates, Mapping):
         do_scaling = False
-        first_star_scale = Decimal(1)
+        first_star_scale = 1
         first_star, *other_stars = star_coordinates
     else:
         do_scaling = True
         first_star, *other_stars = star_coordinates
-        first_star_scale = Decimal(star_coordinates[first_star]) / star_diameter
+        first_star_scale = Fraction(star_coordinates[first_star]) / star_diameter
     first_star_x, first_star_y = first_star
 
-    # TODO: use the real formulae to make up a 5-points star
-    scale = Decimal(star_diameter) / Decimal(240)
-
-    # TODO: avoid using float, somehow
+    star_path = _get_star_path((Fraction(first_star_x)*canton_width, Fraction(first_star_y)*canton_height), star_diameter*first_star_scale/2, 15*' ') # type: ignore
     buffer.append(f'''
     <g id="star">
         <path
-            d="M {float(first_star_x)*canton_width},{float(first_star_y)*canton_height}
-               m 0,{-scale*first_star_scale*star_diameter/2}
-               l {scale*Decimal("70.534230")},{scale*Decimal("217.082039")}
-                 {scale*Decimal("-184.661012")},{scale*Decimal("-134.164078")}
-               h {scale*Decimal("228.253564")}
-               l {scale*Decimal("-184.661012")},{scale*Decimal("134.164078")}
-               z"
+            d="{star_path}"
             fill="{colors.stars}"/>
     </g>''')
 
@@ -256,7 +249,7 @@ def _append_canton_from_coordinates(
     <use href="#star" x="{float(x-first_star_x)*canton_width}" y="{float(y-first_star_y)*canton_height}"''') # type: ignore
         if do_scaling:
             star_size = star_coordinates[x, y] # type: ignore
-            star_scale = Decimal(star_size) / (scale*first_star_scale * star_diameter)
+            star_scale = Fraction(star_size) / (first_star_scale * star_diameter)
             if star_scale != 1:
                 buffer.append(f' transform="scale({star_scale})"')
         buffer.append('/>')
@@ -265,6 +258,42 @@ def _append_footer(buffer: list[str]) -> None:
     buffer.append('''
 </svg>
 ''')
+
+def _get_star_path(
+        start: tuple[Fraction, Fraction],
+        radius: Fraction|int|float,
+        indent: str,
+        ) -> str:
+
+    def fraccos(x):
+        return Fraction(cos(x))
+    def fracsin(x):
+        return Fraction(sin(x))
+    fracpi = Fraction(pi)
+
+    top, topright, bottomright, bottomleft, topleft = [(fraccos(3*fracpi/2 + k*2*fracpi/5), fracsin(3*fracpi/2 + k*2*fracpi/5)) for k in range(5)]
+
+    def c(x):
+        return float(radius*x)
+
+    initial_y = c(top[1])
+    first_move_x = c(bottomright[0]-top[0])
+    first_move_y = c(bottomright[1]-top[1])
+    second_move_x = c(topleft[0]-bottomright[0])
+    second_move_y = c(topleft[1]-bottomright[1])
+    third_move_x = c(topright[0]-topleft[0])
+    fourth_move_x = c(bottomleft[0]-topright[0])
+    fourth_move_y = c(bottomleft[1]-topright[1])
+
+    return indent + ('\n'+indent).join((
+        f'M {float(start[0])},{float(start[1])}',
+        f'm 0,{initial_y}',
+        f'l {first_move_x},{first_move_y}',
+        f'  {second_move_x},{second_move_y}',
+        f'h {third_move_x}',
+        f'l {fourth_move_x},{fourth_move_y}',
+        'z',
+    ))
 
 def write_svg_from_layout(file, *args, **kwargs):
     print(get_svg_from_layout(*args, **kwargs), file=file)
