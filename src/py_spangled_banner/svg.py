@@ -45,16 +45,8 @@ def get_svg_from_layout(
 
     _append_header(buffer, height, width, measurements)
     _append_rect_stripes(buffer, measurements, colors)
-
-    kind = LayoutKind.from_layout(layout)
-    # TODO: implement the different layouts
-    # TODO: fix _from_layout and convert it to _get_star_path
-    # if kind in (LayoutKind.SHORT_SANDWICH,):
-    if False:
-        _append_canton_from_layout(buffer, measurements, layout, colors)
-    else:
-        _append_canton_from_coordinates(buffer, measurements, set(coordinates_from_layout(layout)), colors)
-
+    # use of _append_canton_from_layout possible here
+    _append_canton_from_coordinates(buffer, measurements, set(coordinates_from_layout(layout)), colors)
     _append_footer(buffer)
 
     return "".join(buffer)
