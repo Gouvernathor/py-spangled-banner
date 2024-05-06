@@ -44,7 +44,7 @@ class Measurements(NamedTuple):
         of floating point numbers which would expose the calculations to rounding errors.
         """
         lcm = math.lcm(*(v.denominator for v in self))
-        return Measurements(*(int(v * lcm) for v in self)) # type: ignore
+        return _IntMeasurements(*(int(v * lcm) for v in self)) # type: ignore
 
     def fractionize(self) -> "_FractionMeasurements":
         """
