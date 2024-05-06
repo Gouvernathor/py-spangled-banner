@@ -44,7 +44,7 @@ def get_svg_from_layout(
     buffer = []
 
     _append_header(buffer, height, width, measurements)
-    _append_stripes(buffer, measurements, colors)
+    _append_rect_stripes(buffer, measurements, colors)
 
     kind = LayoutKind.from_layout(layout)
     # TODO: implement the different layouts
@@ -72,7 +72,7 @@ def get_svg_from_star_coordinates(
     buffer = []
 
     _append_header(buffer, height, width, measurements)
-    _append_stripes(buffer, measurements, colors)
+    _append_rect_stripes(buffer, measurements, colors)
     _append_canton_from_coordinates(buffer, measurements, star_coordinates, colors)
     _append_footer(buffer)
 
@@ -137,8 +137,6 @@ def _append_rect_stripes(
 
 def _append_path_stripes(buffer: list[str], measurements: _IntMeasurements, colors: FlagColors) -> None:
     raise NotImplementedError
-
-_append_stripes = _append_rect_stripes
 
 def _append_canton_from_layout(
         buffer: list[str],
