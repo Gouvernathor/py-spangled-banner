@@ -31,7 +31,7 @@ Todos and future features
 - [ ] Consider using etree in the SVG submodule, especially as part of handling
   the layouts
 - [x] Add other builtin palettes
-- [ ] Enable the layout generators to take a layout kind constraint, and only
+- [X] Enable the layout generators to take a layout kind constraint, and only
   return layouts of that kind
   - [ ] Enable that constraint to be passed through from the main function in init
 - [x] Make the SVG builder take a sequence of relative coordinates inside the
@@ -55,3 +55,5 @@ Todos and future features
   - [ ] Sizing the stars arbitrarily using a dict
   - [ ] The layout method for all layout kinds
 - [ ] Add a CLI
+- [ ] Make the normalize function reduce the denominator of the star size when
+  the lcm is too high, rather than doing that preventively
