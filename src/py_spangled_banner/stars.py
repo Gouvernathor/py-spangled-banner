@@ -6,11 +6,14 @@ from collections.abc import Container, Iterable
 import enum
 from fractions import Fraction
 from functools import partial
-from numbers import Real
+from numbers import Rational, Real
+from typing import NewType
 
 __all__ = ("find_best_star_layout", "find_best_star_layouts", "generate_star_layouts")
 
-def _optimize_layout(x: tuple[int, int, int, int], canton_factor: Real) -> Real:
+Comparable = NewType('Comparable', Real)
+
+def _optimize_layout(x: tuple[int, int, int, int], canton_factor: Rational) -> Comparable:
     a, b, c, d = x
     assert (c == 0) == (d == 0)
     return abs((a + c + 1) * canton_factor - (b + d + 1)) # type: ignore
@@ -122,15 +125,21 @@ def generate_star_layouts(nstars: int,
 _DEFAULT_CANTON_FACTOR = Fraction(247, 175)
 # TODO: import it from the geometry module ?
 
-def find_best_star_layout(nstars: int, canton_factor: Real = _DEFAULT_CANTON_FACTOR) -> tuple[int, int, int, int]:
+def find_best_star_layout(nstars: int,
+        canton_factor: Rational = _DEFAULT_CANTON_FACTOR,
+        kinds: Container[LayoutKind|str] = LayoutKind._member_names_,
+        ) -> tuple[int, int, int, int]:
     """
     The optimization key makes the stars layout fit as best possible in a canton of that ratio (width over height)
     """
-    return min(generate_star_layouts(nstars), key=partial(_optimize_layout, canton_factor=canton_factor))
+    return min(generate_star_layouts(nstars, kinds=kinds), key=partial(_optimize_layout, canton_factor=canton_factor))
 
-def find_best_star_layouts(nstars: int, canton_factor: Real = _DEFAULT_CANTON_FACTOR) -> dict[tuple[int, int, int, int], Real]:
+def find_best_star_layouts(nstars: int,
+        canton_factor: Rational = _DEFAULT_CANTON_FACTOR,
+        kinds: Container[LayoutKind|str] = LayoutKind._member_names_,
+        ) -> dict[tuple[int, int, int, int], Comparable]:
     """
     The keys are layout tuples, the values are arbitrary comparable values: the lower, the better it fits.
     """
-    d = {t: _optimize_layout(t, canton_factor) for t in generate_star_layouts(nstars)}
+    d = {t: _optimize_layout(t, canton_factor) for t in generate_star_layouts(nstars, kinds=kinds)}
     return {t: d[t] for t in sorted(d, key=d.__getitem__)}
