@@ -25,27 +25,39 @@ class LayoutKind(enum.StrEnum):
         return self
 
     GRID = enum.auto(), """
-    The stars are arranged in a grid, like the 24-star "Old Glory" flag, or the 48-star flag.
+    The stars are arranged in a grid,
+    like the 24-star "Old Glory" flag, or the 48-star flag.
     """
 
     SHORT_SANDWICH = enum.auto(), """
     Each shorter row of stars is between two longer rows, like the 50-star flag.
+    It can be seen as two grids, one inside the other.
     """
 
     LONG_SANDWICH = enum.auto(), """
     Each longer row of stars is between two shorter rows.
+    It looks like a rectangle with the corners cut off.
     """
 
     PAGODA = enum.auto(), """
     Each longer row of stars is followed by a shorter row, like the 45-star flag.
+    It looks like a rectangle with two corners on the same long side cut off.
+    (This module will always cut off the corners of the bottom side.)
     """
 
     SIDE_PAGODA = enum.auto(), """
-    An odd number of rows, all of the same length, like the short-lived 49-star flag.
+    The rows are all of the same length and there is an odd number of them,
+    like the short-lived 49-star flag.
+    Each longer column of stars is followed by a shorter column,
+    and it looks like a rectangle with two corners on the same short side cut off,
+    making it similar to the pagoda layout but on the side.
+    (This module will always cut off the corners of the right side.)
     """
 
     CUBE = enum.auto(), """
-    An even number of rows, all of the same length.
+    The rows are all of the same length and there is an even number of them.
+    It looks like a rectangle with two opposite corners cut off.
+    (This module will always cut the top-right and bottom-left corners.)
     """
 
     @staticmethod
