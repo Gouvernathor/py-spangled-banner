@@ -2,7 +2,7 @@
 Computes the layout of the stars on an American flag.
 """
 
-from collections.abc import Iterable
+from collections.abc import Container, Iterable
 import enum
 from fractions import Fraction
 from functools import partial
@@ -80,7 +80,9 @@ class LayoutKind(enum.StrEnum):
                     return LayoutKind.PAGODA
         raise ValueError(f"Invalid layout: {layout}")
 
-def generate_star_layouts(nstars: int) -> Iterable[tuple[int, int, int, int]]:
+def generate_star_layouts(nstars: int,
+        kinds: Container[LayoutKind|str] = LayoutKind._member_names_,
+        ) -> Iterable[tuple[int, int, int, int]]:
     """
     The results represent that a rows of b stars are interspersed with c rows of d stars.
 
@@ -94,14 +96,14 @@ def generate_star_layouts(nstars: int) -> Iterable[tuple[int, int, int, int]]:
 
     In any such case, the number of rows is a + c and the number of columns is b + d.
     """
-    # TODO: pass the extended quincunx option through the other functions
     for a in range(1, nstars + 1):
         for b in range(1, nstars // a + 1):
             if a * b > nstars:
                 break
 
             if a * b == nstars:
-                yield a, b, 0, 0
+                if LayoutKind.GRID in kinds:
+                    yield a, b, 0, 0
                 break
 
             for c in (a - 1, a, a + 1):
@@ -114,7 +116,8 @@ def generate_star_layouts(nstars: int) -> Iterable[tuple[int, int, int, int]]:
 
                 for d in d_options:
                     if (a * b + c * d) == nstars:
-                        yield a, b, c, d
+                        if LayoutKind.from_layout((a, b, c, d)) in kinds:
+                            yield a, b, c, d
 
 _DEFAULT_CANTON_FACTOR = Fraction(247, 175)
 # TODO: import it from the geometry module ?
