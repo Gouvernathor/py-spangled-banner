@@ -1,37 +1,31 @@
-Py-Spangled Banner
-==================
+# Py-Spangled Banner
 
 Generator of customizable SVG displays of the US flag
 
-See the official math specifications in `Executive Order 10834 <https://en.wikisource.org/wiki/Executive_Order_10834>`_.
+See the official math specifications in [Executive Order 10834](https://en.wikisource.org/wiki/Executive_Order_10834).
 
-Main module content
--------------------
-
-(TBD)
-
-Stars submodule content
------------------------
+## Main module content
 
 (TBD)
 
-Geometry submodule content
---------------------------
+## Stars submodule content
 
 (TBD)
 
-SVG submodule content
-----------------------
+## Geometry submodule content
 
 (TBD)
 
-Todos and future features
--------------------------
+## SVG submodule content
+
+(TBD)
+
+## Todos and future features
 
 - [ ] Consider using etree in the SVG submodule, especially as part of handling
   the layouts
 - [x] Add other builtin palettes
-- [X] Enable the layout generators to take a layout kind constraint, and only
+- [x] Enable the layout generators to take a layout kind constraint, and only
   return layouts of that kind
   - [ ] Enable that constraint to be passed through from the main function in init
 - [x] Make the SVG builder take a sequence of relative coordinates inside the
