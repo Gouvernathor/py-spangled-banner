@@ -2,7 +2,7 @@
 Computes the layout of the stars on an American flag.
 """
 
-from collections.abc import Container, Iterable
+from collections.abc import Iterable
 import enum
 from fractions import Fraction
 from functools import partial
@@ -84,7 +84,7 @@ class LayoutKind(enum.StrEnum):
         raise ValueError(f"Invalid layout: {layout}")
 
 def generate_star_layouts(nstars: int,
-        kinds: Container[LayoutKind|str]|None = None,
+        kinds: Iterable[LayoutKind|str]|None = None,
         ) -> Iterable[tuple[int, int, int, int]]:
     """
     The results represent that a rows of b stars are interspersed with c rows of d stars.
@@ -102,7 +102,8 @@ def generate_star_layouts(nstars: int,
     If kinds is not None, only the layouts of those kinds are returned.
     """
     if kinds is None:
-        kinds = frozenset(map(str.casefold, LayoutKind))
+        kinds = LayoutKind
+    kinds = frozenset(map(str.casefold, kinds))
     grid_in_kinds = LayoutKind.GRID.casefold() in kinds
 
     for a in range(1, nstars + 1):
@@ -133,7 +134,7 @@ _DEFAULT_CANTON_FACTOR = Fraction(247, 175)
 
 def find_best_star_layout(nstars: int,
         canton_factor: Rational = _DEFAULT_CANTON_FACTOR,
-        kinds: Container[LayoutKind|str]|None = None,
+        kinds: Iterable[LayoutKind|str]|None = None,
         ) -> tuple[int, int, int, int]:
     """
     The optimization key makes the stars layout fit as best possible in a canton of that ratio (width over height)
@@ -142,7 +143,7 @@ def find_best_star_layout(nstars: int,
 
 def find_best_star_layouts(nstars: int,
         canton_factor: Rational = _DEFAULT_CANTON_FACTOR,
-        kinds: Container[LayoutKind|str]|None = None,
+        kinds: Iterable[LayoutKind|str]|None = None,
         ) -> dict[tuple[int, int, int, int], Comparable]:
     """
     The keys are layout tuples, the values are arbitrary comparable values: the lower, the better it fits.
