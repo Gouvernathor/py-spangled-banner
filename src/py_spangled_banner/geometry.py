@@ -37,7 +37,7 @@ class Measurements(NamedTuple):
         if self.canton_height > self.height/2: # type: ignore
             raise ValueError("The canton should not cover more than half of the height of the flag.")
 
-    def normalize(self, *, more_precise=True, max_value=10**8) -> "_IntMeasurements":
+    def normalize(self, *, more_precise=True, max_value=10**7) -> "_IntMeasurements":
         """
         Builds a version only using integers, chosen to be the smallest integers possible
         while keeping the same ratios between all values.
