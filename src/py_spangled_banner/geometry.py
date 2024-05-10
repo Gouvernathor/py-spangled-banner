@@ -14,7 +14,8 @@ __all__ = ("Measurements", "coordinates_from_layout")
 
 class Measurements(NamedTuple):
     # TODO: in 3.13, make the type parameterized and defaulted to Rational,
-    # and make the normalize method return a Measurements[int]
+    # make the normalize method return a Measurements[int],
+    # and make the fractionize and generate methods return Measurements[Fraction].
     height: Rational
     width: Rational
     canton_height: Rational
@@ -44,6 +45,17 @@ class Measurements(NamedTuple):
         of floating point numbers which would expose the calculations to rounding errors.
         """
         lcm = math.lcm(*(v.denominator for v in self))
+        if lcm > 100000:
+            # avoiding massive numbers
+            lcm_without_star_diam = math.lcm(
+                self.height.denominator, self.width.denominator,
+                self.canton_height.denominator, self.canton_width.denominator,
+                self.vertical_stars_margin.denominator, self.vertical_star_spacing.denominator,
+                self.horizontal_stars_margin.denominator, self.horizontal_star_spacing.denominator,
+                self.stripe_height.denominator,
+            )
+            # all the roundings will be exact except for the star diameter
+            return _IntMeasurements(*(round(v * lcm_without_star_diam) for v in self)) # type: ignore
         return _IntMeasurements(*(int(v * lcm) for v in self)) # type: ignore
 
     def fractionize(self) -> "_FractionMeasurements":
@@ -87,8 +99,7 @@ class Measurements(NamedTuple):
                     2 * C / (a + c + 1),
                     Fraction(math.sqrt((D/(b+d+1))**2 + (C/(a+c+1))**2)),
                 ]
-            # limiting the denominator to avoid massive numbers when normalizing
-            K = (Fraction(9007199254740992, 12167419471659595) * min(dists)).limit_denominator(500)
+            K = Fraction(9007199254740992, 12167419471659595) * min(dists)
         else:
             K = L * Fraction(4, 5)
 
