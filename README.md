@@ -33,9 +33,9 @@ See the official math specifications in [Executive Order 10834](https://en.wikis
   - [x] Add, somewhere, a function generating the coordinates of the stars
     relative to the canton based on the layout
     - [ ] Add optional margin parameters ?
-  - [ ] Put the builder taking a layout elsewhere ? Or in the main module, have
-    a builder that takes just a number of stars (as well as other measurements
-    data) ?
+  - [ ] Put the builder taking a layout elsewhere ?
+  - [x] Or in the main module, have a builder that takes just a number of stars
+    (as well as other measurements data) ?
 - In Measurements.generate:
   - [ ] Add xmargin and ymargin parameters, floats relative to the canton size
     which make up (or add to ?) the respective margins, and compute the stars
