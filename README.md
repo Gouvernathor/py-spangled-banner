@@ -49,5 +49,5 @@ See the official math specifications in [Executive Order 10834](https://en.wikis
   - [ ] Sizing the stars arbitrarily using a dict
   - [ ] The layout method for all layout kinds
 - [ ] Add a CLI
-- [ ] Make the normalize function reduce the denominator of the star size when
+- [x] Make the normalize function reduce the denominator of the star size when
   the lcm is too high, rather than doing that preventively
