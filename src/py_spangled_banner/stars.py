@@ -98,6 +98,8 @@ def generate_star_layouts(nstars: int,
     * else, d = b-1
 
     In any such case, the number of rows is a + c and the number of columns is b + d.
+
+    If kinds is not None, only the layouts of those kinds are returned.
     """
     if kinds is None:
         kinds = LayoutKind._member_names_
