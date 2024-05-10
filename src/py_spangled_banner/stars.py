@@ -102,7 +102,7 @@ def generate_star_layouts(nstars: int,
     If kinds is not None, only the layouts of those kinds are returned.
     """
     if kinds is None:
-        kinds = LayoutKind._member_names_
+        kinds = set(map(str.casefold, LayoutKind))
 
     for a in range(1, nstars + 1):
         for b in range(1, nstars // a + 1):
@@ -110,7 +110,7 @@ def generate_star_layouts(nstars: int,
                 break
 
             if a * b == nstars:
-                if LayoutKind.GRID in kinds:
+                if LayoutKind.GRID.casefold() in kinds:
                     yield a, b, 0, 0
                 break
 
@@ -124,7 +124,7 @@ def generate_star_layouts(nstars: int,
 
                 for d in d_options:
                     if (a * b + c * d) == nstars:
-                        if LayoutKind.from_layout((a, b, c, d)) in kinds:
+                        if LayoutKind.from_layout((a, b, c, d)).casefold() in kinds:
                             yield a, b, c, d
 
 _DEFAULT_CANTON_FACTOR = Fraction(247, 175)
