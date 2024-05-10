@@ -102,7 +102,7 @@ def generate_star_layouts(nstars: int,
     If kinds is not None, only the layouts of those kinds are returned.
     """
     if kinds is None:
-        kinds = set(map(str.casefold, LayoutKind))
+        kinds = frozenset(map(str.casefold, LayoutKind))
     grid_in_kinds = LayoutKind.GRID.casefold() in kinds
 
     for a in range(1, nstars + 1):
