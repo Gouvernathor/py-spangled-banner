@@ -103,6 +103,7 @@ def generate_star_layouts(nstars: int,
     """
     if kinds is None:
         kinds = set(map(str.casefold, LayoutKind))
+    grid_in_kinds = LayoutKind.GRID.casefold() in kinds
 
     for a in range(1, nstars + 1):
         for b in range(1, nstars // a + 1):
@@ -110,7 +111,7 @@ def generate_star_layouts(nstars: int,
                 break
 
             if a * b == nstars:
-                if LayoutKind.GRID.casefold() in kinds:
+                if grid_in_kinds:
                     yield a, b, 0, 0
                 break
 
