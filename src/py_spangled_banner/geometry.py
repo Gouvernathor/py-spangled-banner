@@ -93,24 +93,33 @@ class Measurements(NamedTuple):
         Parameters to be added one-by-one.
         """
         a, b, c, d = star_layout
+        kind_is_grid = LayoutKind.from_layout(star_layout) == LayoutKind.GRID
 
         A = Fraction(1)
         B = A * Fraction(19, 10)
         C = A * Fraction(math.ceil(nstripes/2), nstripes)
         D = B * Fraction(2, 5)
-        E = F = C * Fraction(1, a+c+1)
-        G = H = D * Fraction(1, b+d+1)
+        if kind_is_grid:
+            # margin = .75*spacing
+            # (ou spacing = 1.5*margin)
+            H = Fraction(D, b+d+Fraction(1, 3))
+            G = Fraction(2, 3) * H
+            F = Fraction(C, a+c+Fraction(1, 3))
+            E = Fraction(2, 3) * F
+        else:
+            E = F = C * Fraction(1, a+c+1)
+            G = H = D * Fraction(1, b+d+1)
 
         L = A * Fraction(1, nstripes)
         if proportional_star_size:
             # take the closest distance between two stars
             # times a compat factor (so that the 50 remains the same)
-            if LayoutKind.from_layout(star_layout) == LayoutKind.GRID:
+            if kind_is_grid:
                 dists = [
                     D / (b + 1),
                     C / (a + 1),
+                    # the diagonal is always larger than the others
                 ]
-                # the diagonal is always larger than the others
             else:
                 dists = [
                     2 * D / (b + d + 1),
