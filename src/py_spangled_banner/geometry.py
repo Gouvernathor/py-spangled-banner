@@ -10,7 +10,7 @@ from typing import NamedTuple
 
 from .stars import _DEFAULT_LAYOUT, LayoutKind
 
-__all__ = ("Measurements",)
+__all__ = ("Measurements", "coordinates_from_layout")
 
 class Measurements(NamedTuple):
     # TODO: in 3.13, make the type parameterized and defaulted to Rational,

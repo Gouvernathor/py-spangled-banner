@@ -4,16 +4,20 @@ Manages the export to the SVG format.
 
 from collections.abc import Collection, Mapping
 import dataclasses
-from decimal import Decimal
 import enum
 from fractions import Fraction
 from math import cos, pi, sin
 from numbers import Real
 
 from .geometry import _IntMeasurements, coordinates_from_layout, Measurements
-from .stars import LayoutKind
 
-__all__ = ("FlagColors", "get_svg_from_star_coordinates", "write_svg")
+__all__ = (
+    "FlagColors",
+    "get_svg_from_layout",
+    "get_svg_from_star_coordinates",
+    "write_svg_from_layout",
+    "write_svg_from_star_coordinates",
+)
 
 @dataclasses.dataclass
 class FlagColors:
@@ -281,5 +285,5 @@ def _get_star_path(
 def write_svg_from_layout(file, *args, **kwargs):
     print(get_svg_from_layout(*args, **kwargs), file=file)
 
-def write_svg(file, *args, **kwargs):
+def write_svg_from_star_coordinates(file, *args, **kwargs):
     print(get_svg_from_star_coordinates(*args, **kwargs), file=file)
