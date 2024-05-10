@@ -3,11 +3,11 @@ from inspect import signature, Parameter
 import io
 
 _file_parameter = Parameter("file",
-    Parameter.POSITIONAL_OR_KEYWORD,
+    Parameter.POSITIONAL_ONLY,
     annotation=str|io.TextIOBase)
 
 def write_from_get(get_func: Callable[..., str]) -> Callable[..., None]:
-    def write_func(file, *args, **kwargs):
+    def write_func(file, /, *args, **kwargs):
         if isinstance(file, str):
             with open(file, "w") as f:
                 return write_func(f, *args, **kwargs)
