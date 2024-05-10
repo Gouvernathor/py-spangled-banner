@@ -9,6 +9,7 @@ from fractions import Fraction
 from math import cos, pi, sin
 from numbers import Real
 
+from ._util import write_from_get
 from .geometry import _IntMeasurements, coordinates_from_layout, Measurements
 
 __all__ = (
@@ -282,8 +283,5 @@ def _get_star_path(
         'z',
     ))
 
-def write_svg_from_layout(file, *args, **kwargs):
-    print(get_svg_from_layout(*args, **kwargs), file=file)
-
-def write_svg_from_star_coordinates(file, *args, **kwargs):
-    print(get_svg_from_star_coordinates(*args, **kwargs), file=file)
+write_svg_from_layout = write_from_get(get_svg_from_layout)
+write_svg_from_star_coordinates = write_from_get(get_svg_from_star_coordinates)
