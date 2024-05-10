@@ -37,15 +37,26 @@ class Measurements(NamedTuple):
         if self.canton_height > self.height/2: # type: ignore
             raise ValueError("The canton should not cover more than half of the height of the flag.")
 
-    def normalize(self) -> "_IntMeasurements":
+    def normalize(self, *, more_precise=True, max_value=10**8) -> "_IntMeasurements":
         """
         Builds a version only using integers, chosen to be the smallest integers possible
         while keeping the same ratios between all values.
         The goal is to remove use of the Fraction type, while avoiding any use
         of floating point numbers which would expose the calculations to rounding errors.
+
+        The star diameter value's precision will be reduced to make all returned values
+        lower than max_value. Values may be higher than max_value if reducing the star
+        diameter's precision is not enough.
+        If more_precise is False, the star diameter will be directly rounded once,
+        whereas if it is True, the star diameter will be rounded just enough
+        to fit the constraints.
         """
+        if isinstance(self, _IntMeasurements):
+            return self
+
+        max_lcm_value: int|Fraction = max_value/max(self) # type: ignore
         lcm = math.lcm(*(v.denominator for v in self))
-        if lcm > 100000:
+        if lcm > max_lcm_value:
             # avoiding massive numbers
             lcm_without_star_diam = math.lcm(
                 self.height.denominator, self.width.denominator,
@@ -54,8 +65,15 @@ class Measurements(NamedTuple):
                 self.horizontal_stars_margin.denominator, self.horizontal_star_spacing.denominator,
                 self.stripe_height.denominator,
             )
-            # all the roundings will be exact except for the star diameter
-            return _IntMeasurements(*(round(v * lcm_without_star_diam) for v in self)) # type: ignore
+
+            if (not more_precise) or (lcm_without_star_diam > max_lcm_value) or not isinstance(self.star_diameter, Fraction):
+                # all the roundings will be exact except for the star diameter
+                return _IntMeasurements(*(round(v * lcm_without_star_diam) for v in self)) # type: ignore
+
+            while lcm > max_lcm_value:
+                self = self._replace(star_diameter=self.star_diameter.limit_denominator(self.star_diameter.denominator//10)) # type: ignore
+                lcm = math.lcm(*(v.denominator for v in self))
+
         return _IntMeasurements(*(int(v * lcm) for v in self)) # type: ignore
 
     def fractionize(self) -> "_FractionMeasurements":
