@@ -46,7 +46,7 @@ class Measurements(NamedTuple):
 
         The star diameter value's precision will be reduced to make all returned values
         lower than max_value. Values may be higher than max_value if reducing the star
-        diameter's precision is not enough.
+        diameter's precision is not enough, or if reducing it too much would nullify it.
         If more_precise is False, the star diameter will be directly rounded once,
         whereas if it is True, the star diameter will be rounded just enough
         to fit the constraints.
@@ -71,7 +71,12 @@ class Measurements(NamedTuple):
                 return _IntMeasurements(*(round(v * lcm_without_star_diam) for v in self)) # type: ignore
 
             while lcm > max_lcm_value:
-                self = self._replace(star_diameter=self.star_diameter.limit_denominator(self.star_diameter.denominator//10)) # type: ignore
+                new_star_diam = self.star_diameter.limit_denominator(self.star_diameter.denominator//10) # type: ignore
+                if not new_star_diam:
+                    new_star_diam = self.star_diameter.limit_denominator(int(self.star_diameter.denominator/self.star_diameter.numerator)) # type: ignore
+                    if new_star_diam in (self.star_diameter, 0):
+                        break
+                self = self._replace(star_diameter=new_star_diam)
                 lcm = math.lcm(*(v.denominator for v in self))
 
         return _IntMeasurements(*(int(v * lcm) for v in self)) # type: ignore
