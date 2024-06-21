@@ -211,30 +211,22 @@ def _append_canton_from_coordinates(
     canton_width = measurements.canton_width
     canton_height = measurements.canton_height
 
-    if not isinstance(star_coordinates, Mapping):
-        do_scaling = False
-        first_star_scale = 1
-        first_star, *other_stars = star_coordinates
-    else:
-        do_scaling = True
-        first_star, *other_stars = star_coordinates
-        first_star_scale = Fraction(star_coordinates[first_star]) / star_diameter
-    first_star_x, first_star_y = first_star
+    do_scaling = isinstance(star_coordinates, Mapping)
 
-    star_path = _get_star_path((Fraction(first_star_x)*canton_width, Fraction(first_star_y)*canton_height), star_diameter*first_star_scale/2, 15*' ') # type: ignore
+    star_path = _get_star_path(radius=star_diameter/2, indent=17*" ")
     buffer.append(f'''
-    <g id="star">
-        <path
-            d="{star_path}"
-            fill="{colors.stars}"/>
-    </g>''')
+    <defs>
+        <path id="star"
+              d="{star_path}"
+              fill="{colors.stars}"/>
+    </defs>''')
 
-    for (x, y) in other_stars:
+    for x, y in star_coordinates:
         buffer.append(f'''
-    <use href="#star" x="{float(x-first_star_x)*canton_width}" y="{float(y-first_star_y)*canton_height}"''') # type: ignore
+    <use href="#star" x="{float(x*canton_width)}" y="{float(y*canton_height)}"''')
         if do_scaling:
-            star_size = star_coordinates[x, y] # type: ignore
-            star_scale = Fraction(star_size) / (first_star_scale * star_diameter)
+            star_size = star_coordinates[x, y]
+            star_scale = star_size/star_diameter
             if star_scale != 1:
                 buffer.append(f' transform="scale({star_scale})"')
         buffer.append('/>')
@@ -245,7 +237,6 @@ def _append_footer(buffer: list[str]) -> None:
 ''')
 
 def _get_star_path(
-        start: tuple[Fraction|int, Fraction|int],
         radius: Fraction|int|float,
         indent: str,
         ) -> str:
@@ -270,8 +261,7 @@ def _get_star_path(
     fourth_move_x = c(bottomleft[0]-topright[0])
     fourth_move_y = c(bottomleft[1]-topright[1])
 
-    return indent + ('\n'+indent).join((
-        f'M {float(start[0])},{float(start[1])}',
+    return ('\n'+indent).join((
         f'm 0,{initial_y}',
         f'l {first_move_x},{first_move_y}',
         f'  {second_move_x},{second_move_y}',
