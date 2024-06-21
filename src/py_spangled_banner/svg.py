@@ -39,8 +39,9 @@ class FlagPalette(FlagColors, enum.Enum):
 def get_svg_from_layout(
         measurements: Measurements,
         layout: tuple[int, int, int, int],
-        height: Real|str|None = None,
+        *,
         width: Real|str|None = None,
+        height: Real|str|None = None,
         colors: FlagColors = FlagPalette.DEFAULT,
         ) -> str:
 
@@ -59,6 +60,7 @@ def get_svg_from_layout(
 def get_svg_from_star_coordinates(
         measurements: Measurements,
         star_coordinates: Collection[tuple[Real, Real]],
+        *,
         width: Real|str|None = None,
         height: Real|str|None = None,
         colors: FlagColors = FlagPalette.DEFAULT,
