@@ -83,7 +83,7 @@ class LayoutKind(enum.StrEnum):
                     return LayoutKind.PAGODA
         raise ValueError(f"Invalid layout: {layout}")
 
-def generate_star_layouts(nstars: int,
+def generate_star_layouts(nstars: int, *,
         kinds: Iterable[LayoutKind|str]|None = None,
         ) -> Iterable[tuple[int, int, int, int]]:
     """
@@ -132,7 +132,7 @@ def generate_star_layouts(nstars: int,
 _DEFAULT_CANTON_FACTOR = Fraction(247, 175)
 # TODO: import it from the geometry module ?
 
-def find_best_star_layout(nstars: int,
+def find_best_star_layout(nstars: int, *,
         canton_factor: Rational = _DEFAULT_CANTON_FACTOR,
         kinds: Iterable[LayoutKind|str]|None = None,
         ) -> tuple[int, int, int, int]:
@@ -141,7 +141,7 @@ def find_best_star_layout(nstars: int,
     """
     return min(generate_star_layouts(nstars, kinds=kinds), key=partial(_optimize_layout, canton_factor=canton_factor))
 
-def find_best_star_layouts(nstars: int,
+def find_best_star_layouts(nstars: int, *,
         canton_factor: Rational = _DEFAULT_CANTON_FACTOR,
         kinds: Iterable[LayoutKind|str]|None = None,
         ) -> dict[tuple[int, int, int, int], Comparable]:
