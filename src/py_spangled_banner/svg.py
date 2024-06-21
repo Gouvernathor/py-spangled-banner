@@ -115,7 +115,7 @@ def _append_rect_stripes(
     buffer.append(f'''
     <defs>
         <rect id="long_{white_id}" width="{measurements.width}" height="{measurements.stripe_height}" fill="{colors.inner_stripes}"/>
-        <use href="#long_{white_id}" id="short_{white_id}" width="{measurements.width-measurements.canton_width}"/>
+        <use href="#long_{white_id}" id="short_{white_id}" x="{measurements.canton_width}" width="{measurements.width-measurements.canton_width}"/>
     </defs>''')
 
     # red base
