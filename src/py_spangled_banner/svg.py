@@ -112,27 +112,22 @@ def _append_rect_stripes(
     nb_short_white_stripes = (measurements.canton_height // measurements.stripe_height) // 2
     white_id = "white_stripe" if colors is FlagPalette.DEFAULT else "inner_stripe"
 
-    # TODO: what if there is only short white stripes ? or no white stripes ?
+    buffer.append(f'''
+    <defs>
+        <rect id="long_{white_id}" width="{measurements.width}" height="{measurements.stripe_height}" fill="{colors.inner_stripes}"/>
+        <use href="#long_{white_id}" id="short_{white_id}" width="{measurements.width-measurements.canton_width}"/>
+    </defs>''')
+
+    # red base
     buffer.append(f'''
     <rect width="{measurements.width}" height="{measurements.height}" fill="{colors.outer_stripes}"/>''')
 
-    if nb_white_stripes:
-        if not (nb_white_stripes - nb_short_white_stripes):
-            raise NotImplementedError("Versions of the flag where there is no long inner (white) stripe are not supported.")
+    stripe_id = f"short_{white_id}"
+    for istripe in range(nb_white_stripes):
+        if istripe >= nb_short_white_stripes:
+            stripe_id = f"long_{white_id}"
         buffer.append(f'''
-    <rect id="large_{white_id}" width="{measurements.width}" y="{measurements.stripe_height*(nb_short_white_stripes*2+1)}" height="{measurements.stripe_height}" fill="{colors.inner_stripes}"/>''')
-
-    if nb_short_white_stripes:
-        buffer.append(f'''
-    <use href="#large_{white_id}" id="short_{white_id}" x="{measurements.canton_width}" width="{measurements.width-measurements.canton_width}" y="{measurements.stripe_height*(-nb_short_white_stripes*2)}"/>''')
-
-    for ismall in range(1, nb_short_white_stripes):
-        buffer.append(f'''
-    <use href="#short_{white_id}" y="{measurements.stripe_height*(ismall*2)}"/>''')
-
-    for ilarge in range(1, nb_white_stripes - nb_short_white_stripes):
-        buffer.append(f'''
-    <use href="#large_{white_id}" y="{measurements.stripe_height*(ilarge*2)}"/>''')
+    <use href="#{stripe_id}" y="{(istripe*2+1)*measurements.stripe_height}"/>''')
 
 def _append_path_stripes(buffer: list[str], measurements: _IntMeasurements, colors: FlagColors) -> None:
     raise NotImplementedError
