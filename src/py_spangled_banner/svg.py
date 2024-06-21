@@ -158,11 +158,12 @@ def _append_canton_from_layout(
         buffer.append(f'''
         <g id="{sh_row_id}">''')
 
-    starpath = _get_star_path((measurements.horizontal_stars_margin, measurements.vertical_stars_margin), measurements.star_diameter/2, 23*' ')
+    starpath = _get_star_path(measurements.star_diameter/2, 23*' ')
 
     buffer.append(f'''
             <g id="star">
                 <path
+                    x="{measurements.horizontal_stars_margin}" y="{measurements.vertical_stars_margin}"
                     d="{starpath}"
                     fill="{colors.stars}"/>
             </g>''')
