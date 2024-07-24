@@ -84,6 +84,8 @@ These are found in the `py_spangled_banner.geometry` module. This submodule gene
 
   This is a class that holds the measurements defining the geometry of the flag, similar to the government specifications described in Executive Order 10834.
 
+  The constructor takes 10 parameters, all floats in the same unit : `height`, `width`, `canton_height`, `canton_width`, `vertical_stars_margin`, `vertical_star_spacing`, `horizontal_stars_margin`, `horizontal_star_spacing`, `star_diameter` and `stripe_height`. They are available as attributes. `Measurements` instances are read-only and immutable.
+
   `generate(*, stars_layout: tuple[int, int, int, int] = (5, 6, 4, 5), nstripes: int = 13, proportional_star_size: bool = True) -> Measurements`
 
     This static method generates the specifications for a flag with the given layout (which includes the number of stars) and number of stripes. The `proportional_star_size` parameter enables the star size to be scaled to fit best, in a way which makes the 50-star flag same as the official specifications.
