@@ -162,7 +162,7 @@ The `get_svg_from_layout` and `get_svg_from_star_coordinates` functions are simi
     - May cause issues with the no-layout builder version - but generate
       requires a layout anyway so it's a bigger issue
 - In the SVG writer, fix:
-  - [ ] Sizing the stars arbitrarily using a dict
+  - [x] Sizing the stars arbitrarily using a dict
   - [ ] The layout method for all layout kinds
 - [ ] Add a CLI
 - [x] Make the normalize function reduce the denominator of the star size when
