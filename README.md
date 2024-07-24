@@ -6,7 +6,25 @@ See the official math specifications in [Executive Order 10834](https://en.wikis
 
 ## Main module content
 
-(TBD)
+These are found in the `py_spangled_banner` module.
+
+`write_svg(file: str|io.TextIOBase, /, nstars: int, *, canton_factor: Rational = Fraction(247, 175), kinds: Iterable[stars.LayoutKind|str]|None = None, nstripes: int = 13, proportional_star_size: bool = True, width: float|str|None = None, height: float|str|None = None, colors: svg.FlagColors = FlagPalette.DEFAULT)`
+
+This function writes an SVG file representing a stars-and-stripes flag. The parameters are as follows:
+
+- `file: str|io.TextIOBase`: a file-like object open in text mode, or the path to the file to write on. If a path is provided, the file will be written ti in UTF-8 encoding, and it will be created if it doesn't exist or overwritten if it does.
+
+- `nstars: int`: the number of stars to display in the canton.
+
+- The other keyword parameters are passed to functions from the submodules used by this function:
+
+  - `stars.find_best_star_layout`: `canton_factor` and `kinds`
+  - `geometry.Measurements.generate`: `nstripes` and `proportional_star_size`
+  - `svg.get_svg_from_layout`: `width`, `height` and `colors`
+
+`get_svg(nstars: int, *, canton_factor: Rational = Fraction(247, 175), kinds: Iterable[stars.LayoutKind|str]|None = None, nstripes: int = 13, proportional_star_size: bool = True, width: float|str|None = None, height: float|str|None = None, colors: svg.FlagColors = FlagPalette.DEFAULT) -> str`
+
+Instead of writing it to a file, this function returns the SVG content as a string. The parameters are otherwise the same.
 
 ## Stars submodule content
 
