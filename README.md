@@ -94,7 +94,45 @@ These are found in the `py_spangled_banner.geometry` module. This submodule gene
 
 ## SVG submodule content
 
-(TBD)
+These are found in the `py_spangled_banner.svg` module. This submodule generates SVG content from the measurements and coordinates.
+
+`FlagColors`
+
+  This is a dataclass that holds the colors of a flag, stored as strings and supported by the SVG standard.
+
+  `outer_stripes`
+
+    The color of the outer stripes, which are red in the official flag.
+
+  `inner_stripes`
+
+    The color of the inner stripes, which are white in the official flag.
+
+  `canton`
+
+    The color of the canton, which is blue in the official flag.
+
+  `stars`
+
+    The color of the stars, which are white in the official flag.
+
+`FlagPalette`
+
+  This is an enumeration of built-in FlagColors presets.
+
+  `DEFAULT` : the official colors
+
+  `SATURATED` : the most saturated red, white and blue colors
+
+`write_svg_from_layout(file: str|io.TextIOBase, /, measurements: Measurements, layout: tuple[int, int, int, int], *, width: float|str|None = None, height: float|str|None = None, colors: FlagColors = FlagPalette.DEFAULT)`
+
+  This function writes an SVG file representing a flag from the given measurements and star layout. The parameters are self-explanatory.
+
+`write_svg_from_star_coordinates(file: str|io.TextIOBase, /, measurements: Measurements, star_coordinates: Collection[tuple[float, float]], *, width: float|str|None = None, height: float|str|None = None, colors: FlagColors = FlagPalette.DEFAULT)`
+
+  This function instead takes arbitrary star coordinates. They can be passed as several kinds of Collections (a tuple, list, set of pairs of floats), but if given as a dict, the values of the dict are taken as being float multipliers of the star size given in the `measurements` parameter.
+
+The `get_svg_from_layout` and `get_svg_from_star_coordinates` functions are similar, but return the SVG content as a string instead of writing it to a file (and they do not take a file parameter).
 
 ## Todos and future features
 

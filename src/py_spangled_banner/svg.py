@@ -14,6 +14,7 @@ from .geometry import _IntMeasurements, coordinates_from_layout, Measurements
 
 __all__ = (
     "FlagColors",
+    "FlagPalette",
     "get_svg_from_layout",
     "get_svg_from_star_coordinates",
     "write_svg_from_layout",
