@@ -9,7 +9,7 @@ from functools import partial
 from numbers import Rational, Real
 from typing import NewType
 
-__all__ = ("find_best_star_layout", "find_best_star_layouts", "generate_star_layouts")
+__all__ = ("LayoutKind", "find_best_star_layout", "find_best_star_layouts", "generate_star_layouts")
 
 Comparable = NewType('Comparable', Real)
 
@@ -64,7 +64,7 @@ class LayoutKind(enum.StrEnum):
     """
 
     @staticmethod
-    def from_layout(layout: tuple[int, int, int, int]) -> "LayoutKind":
+    def from_layout(layout: tuple[int, int, int, int], /) -> "LayoutKind":
         a, b, c, d = layout
         if (a == 0) == (b == 0) and (c == 0) == (d == 0):
             if not c:
