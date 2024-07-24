@@ -22,13 +22,12 @@ def get_svg(nstars: int, **kwargs) -> str:
     return get_svg_from_layout(measurements, layout, **gsfl_kwargs)
 
 _sig = signature(get_svg)
-_nstars_param = _sig.parameters["nstars"]
 get_svg.__signature__ = _sig.replace(parameters=(
-    _nstars_param,
+    *(p for p in _sig.parameters.values() if p.kind!=p.VAR_KEYWORD),
     *_FBSL_PARAM_NAMES.values(),
     *_MG_PARAM_NAMES.values(),
     *_GSFL_PARAM_NAMES.values(),
 ))
-del _sig, _nstars_param
+del _sig
 
 write_svg = write_from_get(get_svg)
