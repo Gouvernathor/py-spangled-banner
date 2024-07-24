@@ -78,7 +78,19 @@ These are found in the `py_spangled_banner.stars` module. This submodule generat
 
 ## Geometry submodule content
 
-(TBD)
+These are found in the `py_spangled_banner.geometry` module. This submodule generates measurements and coordinates for elements of the flag.
+
+`Measurements`
+
+  This is a class that holds the measurements defining the geometry of the flag, similar to the government specifications described in Executive Order 10834.
+
+  `generate(*, stars_layout: tuple[int, int, int, int] = (5, 6, 4, 5), nstripes: int = 13, proportional_star_size: bool = True) -> Measurements`
+
+    This static method generates the specifications for a flag with the given layout (which includes the number of stars) and number of stripes. The `proportional_star_size` parameter enables the star size to be scaled to fit best, in a way which makes the 50-star flag same as the official specifications.
+
+`coordinates_from_layout(layout: tuple[int, int, int, int], /, *, nstripes: int = 13, proportional_star_size: bool = True) -> Iterable[tuple[float, float]]`
+
+  This generates, in arbitrary order, the coordinates of the stars inside the canton, relative to the canton size.
 
 ## SVG submodule content
 

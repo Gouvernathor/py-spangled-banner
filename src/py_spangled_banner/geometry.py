@@ -163,10 +163,14 @@ class _IntMeasurements(Measurements):
     star_diameter: int
     stripe_height: int
 
-def coordinates_from_layout(layout: tuple[int, int, int, int]) -> Iterable[tuple[Rational, Rational]]:
+def coordinates_from_layout(layout: tuple[int, int, int, int], /, *,
+        nstripes: int = 13,
+        proportional_start_size: bool = True,
+        ) -> Iterable[tuple[Rational, Rational]]:
     a, b, c, d = layout
 
-    measurements = Measurements.generate(star_layout=layout)
+    measurements = Measurements.generate(star_layout=layout,
+        nstripes=nstripes, proportional_star_size=proportional_start_size)
     relative_xmargin = measurements.horizontal_stars_margin / measurements.canton_width
     relative_ymargin = measurements.vertical_stars_margin / measurements.canton_height
     relative_xspacing = measurements.horizontal_star_spacing / measurements.canton_width
